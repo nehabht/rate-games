@@ -1,23 +1,25 @@
 <template>
   <div id="app">
     <main>
-      <form class="search">
-        <input
-          type="text"
-          class="form-control"
-          v-model="searchQuery"
-          v-on:change="inputResults"
-        />
-        <button class="btn btn-dark mt-2" type="submit">Search</button>
-      </form>
+      <div class="container w-25 my-4">
+        <form class="search">
+          <input
+            type="text"
+            class="form-control"
+            v-model="searchQuery"
+            v-on:change="inputResults"
+          />
+          <button class="btn btn-dark mt-2" type="submit">Search</button>
+        </form>
+      </div>
       <section v-if="!loading">
-        <div class="container w-25 my-4"></div>
         <div class="container">
           <div class="row">
             <div
               class="col-3"
-              v-for="(game, index) in searchedGames"
-              :key="index"
+              v-for="game in searchedGames"
+              :key="game.id"
+              @click="selected(game)"
             >
               <img :src="game.thumbnail" alt="game.title" />
               <h3>{{ game.title }}</h3>
@@ -44,6 +46,7 @@ export default {
       games: null,
       searchedGames: [],
       loading: true,
+      favoriteGames: [],
     };
   },
   created: function () {
@@ -52,6 +55,7 @@ export default {
       .then((response) => {
         console.log(response);
         this.games = response.data;
+        this.searchedGames = this.games;
         this.loading = false;
       })
       .catch((error) => {
@@ -70,6 +74,14 @@ export default {
         }
       });
       return this.games;
+    },
+    selected(element) {
+      //this.element = element.title;
+      console.log(element.title);
+      console.log("this is the element i clicked: ", element.title);
+      /* bug può inserire lo stesso elemento più volte */
+      this.favoriteGames.push(element.title);
+      console.log(this.favoriteGames);
     },
   },
 };
