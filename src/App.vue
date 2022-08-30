@@ -1,5 +1,10 @@
 <template>
   <div id="app">
+    <header>
+      <div class="selectedGames">
+        <h5>{{ favorites.length }} saved games</h5>
+      </div>
+    </header>
     <main>
       <div class="container w-25 my-4">
         <form class="search">
@@ -15,14 +20,12 @@
       <section v-if="!loading">
         <div class="container">
           <div class="row">
-            <div
-              class="col-3"
-              v-for="game in searchedGames"
-              :key="game.id"
-              @click="selected(game)"
-            >
+            <div class="col-3" v-for="game in searchedGames" :key="game.id">
               <img :src="game.thumbnail" alt="game.title" />
               <h3>{{ game.title }}</h3>
+              <button class="btn btn-primary" @click="addToFavorites(game)">
+                add to favorites
+              </button>
             </div>
           </div>
         </div>
@@ -46,7 +49,10 @@ export default {
       games: null,
       searchedGames: [],
       loading: true,
-      favoriteGames: [],
+      favorites: [],
+      favesLocalStorage: JSON.parse(
+        localStorage.getItem("storedGames") || "[]"
+      ),
     };
   },
   created: function () {
@@ -61,6 +67,7 @@ export default {
       .catch((error) => {
         console.log(error);
       });
+    this.favorites = this.favesLocalStorage;
   },
   methods: {
     inputResults: function () {
@@ -75,13 +82,10 @@ export default {
       });
       return this.games;
     },
-    selected(element) {
-      //this.element = element.title;
-      console.log(element.title);
-      console.log("this is the element i clicked: ", element.title);
-      /* bug può inserire lo stesso elemento più volte */
-      this.favoriteGames.push(element.title);
-      console.log(this.favoriteGames);
+    addToFavorites(product) {
+      this.favorites.push(product);
+      console.log(this.favorites);
+      localStorage.setItem("storedGames", JSON.stringify(this.favorites));
     },
   },
 };
